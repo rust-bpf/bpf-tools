@@ -1,0 +1,34 @@
+[package]
+name = "bpf-tools"
+version = "0.0.1"
+authors = ["Brian Martin <bmartin@twitter.com>"]
+description = "eBPF tools implemented in Rust"
+edition = "2018"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/rust-bpf/tools"
+homepage = "https://github.com/rust-bpf/tools"
+keywords = ["bpf", "ebpf", "bcc", "tools"]
+
+[dependencies]
+bcc = "0.0.15"
+clap = "2.33.0"
+ctrlc = "3.1.3"
+failure = "0.1.5"
+
+[[bin]]
+name = "runqlat"
+path = "src/runqlat/main.rs"
+
+[features]
+static = ["bcc/static"]
+bcc_v0_4_0 = ["bcc/v0_4_0"]
+bcc_v0_5_0 = ["bcc/v0_5_0"]
+bcc_v0_6_0 = ["bcc/v0_6_0"]
+bcc_v0_6_1 = ["bcc/v0_6_1"]
+bcc_v0_7_0 = ["bcc/v0_7_0"]
+bcc_v0_8_0 = ["bcc/v0_8_0"]
+bcc_v0_9_0 = ["bcc/v0_9_0"]
+bcc_v0_10_0 = ["bcc/v0_10_0"]
+bcc_v0_11_0 = ["bcc/v0_11_0"]
+bcc_v0_12_0 = ["bcc/v0_12_0"]
