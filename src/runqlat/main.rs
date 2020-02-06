@@ -84,7 +84,7 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), Error> {
         .value_of("windows")
         .map(|v| v.parse().expect("Invalid argument for windows"));
 
-    let code = if cfg!(any(feature = "v0_4_0", feature = "v0_5_0")) {
+    let code = if cfg!(any(feature = "bcc_v0_4_0", feature = "bcc_v0_5_0")) {
         include_str!("bpf.c").replace("#define FEATURE_SUPPORT_RAW_TP", "")
     } else {
         include_str!("bpf.c").to_string()
