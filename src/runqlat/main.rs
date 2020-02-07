@@ -11,8 +11,8 @@ use std::{mem, thread, time};
 // Based on: https://github.com/iovisor/bcc/blob/master/tools/runqlat.py
 
 #[cfg(any(
-    feature = "v0_4_0",
-    feature = "v0_5_0",
+    feature = "bcc_v0_4_0",
+    feature = "bcc_v0_5_0",
 ))]
 fn attach_events(bpf: &mut BPF) {
     let trace_run = bpf.load_kprobe("trace_run").unwrap();
@@ -25,15 +25,15 @@ fn attach_events(bpf: &mut BPF) {
 }
 
 #[cfg(any(
-    feature = "v0_6_0",
-    feature = "v0_6_1",
-    feature = "v0_7_0",
-    feature = "v0_8_0",
-    feature = "v0_9_0",
-    feature = "v0_10_0",
-    feature = "v0_11_0",
-    feature = "v0_12_0",
-    not(feature = "specific"),
+    feature = "bcc_v0_6_0",
+    feature = "bcc_v0_6_1",
+    feature = "bcc_v0_7_0",
+    feature = "bcc_v0_8_0",
+    feature = "bcc_v0_9_0",
+    feature = "bcc_v0_10_0",
+    feature = "bcc_v0_11_0",
+    feature = "bcc_v0_12_0",
+    not(feature = "bcc_specific"),
 ))]
 fn attach_events(bpf: &mut BPF) {
     if bpf.support_raw_tracepoint() {
@@ -84,7 +84,7 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), Error> {
         .value_of("windows")
         .map(|v| v.parse().expect("Invalid argument for windows"));
 
-    let code = if cfg!(any(feature = "v0_4_0", feature = "v0_5_0")) {
+    let code = if cfg!(any(feature = "bcc_v0_4_0", feature = "bcc_v0_5_0")) {
         include_str!("bpf.c").replace("#define FEATURE_SUPPORT_RAW_TP", "")
     } else {
         include_str!("bpf.c").to_string()
