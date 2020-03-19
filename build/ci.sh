@@ -54,7 +54,7 @@ if [ -n "${BCC_VERSION}" ]; then
     cd ../..
 fi
 
-## Build and test
+
 ## Build and test
 if [ -n "${FEATURES}" ]; then
     cargo build --features "${FEATURES}"
@@ -62,10 +62,14 @@ if [ -n "${FEATURES}" ]; then
     cargo build --release --features "${FEATURES}"
     cargo test --release --features "${FEATURES}"
     sudo target/release/runqlat --interval 1 --windows 5
+    timeout --signal=INT --preserve-status 1.0m bash -c 'while true; do curl google.com; sleep 5; done &>/dev/null &'
+    sudo timeout --signal=INT --preserve-status 1.0m ./target/release/tcpconnect
 else
     cargo build
     cargo test
     cargo build --release
     cargo test --release
     sudo target/release/runqlat --interval 1 --windows 5
+    timeout --signal=INT --preserve-status 1.0m bash -c 'while true; do curl google.com; sleep 5; done &>/dev/null &'
+    sudo timeout --signal=INT --preserve-status 1.0m ./target/release/tcpconnect
 fi
