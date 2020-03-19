@@ -20,6 +20,10 @@ failure = "0.1.5"
 name = "runqlat"
 path = "src/runqlat/main.rs"
 
+[[bin]]
+name = "tcpconnect"
+path = "src/tcpconnect/main.rs"
+
 [features]
 static = ["bcc/static"]
 bcc_specific = []
