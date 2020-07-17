@@ -3,9 +3,9 @@ use bcc::BccError;
 use clap::{App, Arg};
 
 use core::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Arc;
-use std::{mem, ptr, thread, time, cmp};
 use std::collections::HashMap;
+use std::sync::Arc;
+use std::{cmp, mem, ptr, thread, time};
 
 // A simple tool for reporting on time spent in hardirq handlers
 //
@@ -68,17 +68,22 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
 
     let code = include_str!("bpf.c");
     let code = if matches.is_present("distribution") {
-        code.replace("##STORE##", 
+        code.replace(
+            "##STORE##",
             &format!(
                 "irq_key_t key = {{.slot = bpf_log2l(delta / {factor})}};
                 bpf_probe_read_kernel(&key.name, sizeof(key.name), name);
                 dist.increment(key);",
-                factor=factor))
+                factor = factor
+            ),
+        )
     } else {
-        code.replace("##STORE##", 
+        code.replace(
+            "##STORE##",
             "irq_key_t key = {.slot = 0 /* ignore */};
             bpf_probe_read(&key.name, sizeof(key.name), name);
-            dist.increment(key, delta);")
+            dist.increment(key, delta);",
+        )
     };
 
     let mut bpf = BPF::new(&code)?;
@@ -112,6 +117,7 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
 }
 
 fn print_distribution(table: &mut bcc::table::Table, unit: &str) {
+    println!("\n=====");
     for (hardirq_name, value) in map_from_table(table) {
         let mut idx_max = 0u64;
         let mut cnt_max = 0u64;
@@ -125,7 +131,7 @@ fn print_distribution(table: &mut bcc::table::Table, unit: &str) {
             continue;
         }
 
-        println!("\n{}\ntime({}) {:<-22}", hardirq_name, unit, "count");
+        println!("\n{}\n   time({}) {:>-19}", hardirq_name, unit, "count");
         for i in 1..(idx_max + 1) {
             let mut low = (1 << i) >> 1;
             let high = (1 << i) - 1;
@@ -136,13 +142,19 @@ fn print_distribution(table: &mut bcc::table::Table, unit: &str) {
 
             let val = value.get(&i).unwrap_or(&0);
 
-            println!("{:>10} : {:<-10} : {:<-8} |{:<-40}|", low, high, val, format!("{:*<1$}", "", (val * 40 / cnt_max) as usize));
+            println!(
+                "{:>10} : {:<-10} : {:<-8} |{:<-40}|",
+                low,
+                high,
+                val,
+                format!("{:*<1$}", "", (val * 40 / cnt_max) as usize)
+            );
         }
     }
 }
 
 fn print_time(table: &mut bcc::table::Table, factor: u64, unit: &str) {
-    println!("\n{:<-16} {:<-11}", "HARDIRQ", unit); 
+    println!("\n{:<-16} {:<-11}", "HARDIRQ", unit);
     for entry in table.iter() {
         let data = parse_struct(&entry.key);
         let value = entry.value;
@@ -174,7 +186,7 @@ fn map_from_table(table: &mut bcc::table::Table) -> HashMap<String, HashMap<u64,
         if !current.contains_key(&name) {
             current.insert(name, HashMap::new());
         }
-        
+
         let mut value = [0; 8];
         if value.len() != entry.value.len() {
             continue;
@@ -187,7 +199,7 @@ fn map_from_table(table: &mut bcc::table::Table) -> HashMap<String, HashMap<u64,
         map.unwrap().insert(key.slot, value);
 
         // Clear the table to reset counter
-        let _ = table.set(&mut entry.key, &mut [0_u8; 8]);
+        let _ = table.delete(&mut entry.key);
     }
 
     current
