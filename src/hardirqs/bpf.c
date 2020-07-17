@@ -44,10 +44,8 @@ int hardirq_exit(struct pt_regs *ctx)
     char *name = (char *)action->name;
     delta = bpf_ktime_get_ns() - *tsp;
 
-    // store as sum
-    irq_key_t key = {.slot = 0 /* ignore */};
-    bpf_probe_read_kernel(&key.name, sizeof(key.name), name);
-    dist.increment(key, delta);
+    // store as sum or histogram
+    ##STORE##
 
     start.delete(&pid);
     irqdesc.delete(&pid);
