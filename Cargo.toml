@@ -24,6 +24,10 @@ path = "src/runqlat/main.rs"
 name = "tcpconnect"
 path = "src/tcpconnect/main.rs"
 
+[[bin]]
+name = "syscalls"
+path = "src/syscalls/main.rs"
+
 [features]
 static = ["bcc/static"]
 bcc_specific = []
