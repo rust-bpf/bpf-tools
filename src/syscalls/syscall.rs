@@ -3,6 +3,10 @@
 // Copyright 2017 Sasha Goldshtein
 // Copyright 2018 Red Hat, Inc.
 
+
+// Syscall table for Linux x86_64, not very recent.
+// generated from strace/linux/x86_64/syscallent.h 
+
 pub fn syscall_name(syscall_num: u32) -> Option<&'static str> {
     match syscall_num {
         0 => Some("read"),
