@@ -19,8 +19,8 @@ struct data_key_t {
 }
 
 const MILLISECOND: u64 = 1_000 * MICROSECOND;
-const MICROSECOND: u64 = 1_000 * NANOSECOND;    
-const NANOSECOND: u64 = 1; 
+const MICROSECOND: u64 = 1_000 * NANOSECOND;
+const NANOSECOND: u64 = 1;
 
 fn get_code(matches: &ArgMatches) -> String {
     let code = include_str!("bpf.c");
@@ -41,11 +41,9 @@ fn get_code(matches: &ArgMatches) -> String {
     } else {
         code
     };
-    
+
     let code = if matches.is_present("errorno") {
-        let errorno = matches
-            .value_of("errorno")
-            .unwrap_or("0");
+        let errorno = matches.value_of("errorno").unwrap_or("0");
 
         format!("#define FILTER_ERRNO {} \n {}", errorno, code)
     } else {
@@ -134,15 +132,14 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
         .unwrap_or("1")
         .parse()
         .expect("Invalid number of interval");
-    
+
     let windows: Option<usize> = matches
         .value_of("windows")
         .map(|v| v.parse().expect("Invalud argument for windows"));
 
-   
     let code = get_code(&matches);
     let mut bpf = BPF::new(&code)?;
-    
+
     let sys_exit = bpf.load_tracepoint("sys_exit")?;
     bpf.attach_tracepoint("raw_syscalls", "sys_exit", sys_exit)?;
 
@@ -210,10 +207,12 @@ fn print_latency(table: &bcc::table::Table, matches: &ArgMatches) {
         if top.is_some() && top.unwrap() == i {
             break;
         }
-        println!("{:<-22} {:<-6} {:<-16}",
-            syscall::syscall_name(value.0).unwrap_or("unknown"), 
-            value.1.count, 
-            value.1.total_ns / time_factor);
+        println!(
+            "{:<-22} {:<-6} {:<-16}",
+            syscall::syscall_name(value.0).unwrap_or("unknown"),
+            value.1.count,
+            value.1.total_ns / time_factor
+        );
     }
 }
 
@@ -244,9 +243,11 @@ fn print_count(table: &bcc::table::Table, matches: &ArgMatches) {
         if top.is_some() && top.unwrap() == i {
             break;
         }
-        println!("{:<-22} {:<-6}", 
-            syscall::syscall_name(value.0).unwrap_or("unknown"), 
-            value.1);
+        println!(
+            "{:<-22} {:<-6}",
+            syscall::syscall_name(value.0).unwrap_or("unknown"),
+            value.1
+        );
     }
 }
 
