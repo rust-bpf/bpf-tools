@@ -17,16 +17,16 @@ ctrlc = "3.1.4"
 failure = "0.1.8"
 
 [[bin]]
+name = "hardirqs"
+path = "src/hardirqs/main.rs"
+
+[[bin]]
 name = "runqlat"
 path = "src/runqlat/main.rs"
 
 [[bin]]
 name = "tcpconnect"
 path = "src/tcpconnect/main.rs"
-
-[[bin]]
-name = "hardirqs"
-path = "src/hardirqs/main.rs"
 
 [features]
 static = ["bcc/static"]
