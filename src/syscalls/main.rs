@@ -207,6 +207,13 @@ fn print_latency(table: &bcc::table::Table, matches: &ArgMatches) {
         if top.is_some() && top.unwrap() == i {
             break;
         }
+
+        // BCC table keeps an entry in the table whenever we call delete_all. 
+        // Temporary fix to not display empty entries.
+        if value.1.count == 0 {
+            continue
+        }
+
         println!(
             "{:<-22} {:<-6} {:<-16}",
             syscall::syscall_name(value.0).unwrap_or("unknown"),
@@ -243,6 +250,13 @@ fn print_count(table: &bcc::table::Table, matches: &ArgMatches) {
         if top.is_some() && top.unwrap() == i {
             break;
         }
+        
+        // BCC table keeps an entry in the table whenever we call delete_all. 
+        // Temporary fix to not display empty entries.
+        if value.1 == 0 {
+            continue;
+        }
+
         println!(
             "{:<-22} {:<-6}",
             syscall::syscall_name(value.0).unwrap_or("unknown"),
