@@ -208,8 +208,8 @@ fn print_latency(table: &bcc::table::Table, matches: &ArgMatches) {
             break;
         }
 
-        // BCC table keeps an entry in the table whenever we call delete_all. 
-        // Temporary fix to not display empty entries.
+        // Iterating over an "empty" table results in an iterator of length 1.
+        // This iterator contains garbage values that we don't want to show.
         if value.1.count == 0 {
             continue
         }
@@ -251,8 +251,8 @@ fn print_count(table: &bcc::table::Table, matches: &ArgMatches) {
             break;
         }
         
-        // BCC table keeps an entry in the table whenever we call delete_all. 
-        // Temporary fix to not display empty entries.
+        // Iterating over an "empty" table results in an iterator of length 1.
+        // This iterator contains garbage values that we don't want to show.
         if value.1 == 0 {
             continue;
         }
