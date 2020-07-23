@@ -23,38 +23,26 @@ const MICROSECOND: u64 = 1_000 * NANOSECOND;
 const NANOSECOND: u64 = 1;
 
 fn get_code(matches: &ArgMatches) -> String {
-    let code = include_str!("bpf.c");
-    let code = if matches.is_present("pid") {
-        let pid: u32 = matches
+    let mut code = include_str!("bpf.c").to_string();
+    if matches.is_present("pid") {
+            let pid: u32 = matches
             .value_of("pid")
-            .unwrap_or("1")
+            .unwrap()
             .parse()
             .expect("Invalid pid");
-
-        format!("#define FILTER_PID {} \n {}", pid, code)
-    } else {
-        code.to_string()
-    };
-
-    let code = if matches.is_present("failures") {
-        format!("#define FILTER_FAILED {}", code)
-    } else {
-        code
-    };
-
-    let code = if matches.is_present("errorno") {
-        let errorno = matches.value_of("errorno").unwrap_or("0");
-
-        format!("#define FILTER_ERRNO {} \n {}", errorno, code)
-    } else {
-        code
-    };
-
-    let code = if matches.is_present("latency") {
-        format!("#define LATENCY \n {}", code)
-    } else {
-        code
-    };
+        
+        code = format!("#define FILTER_PID {} \n {}", pid, code);
+    }
+    if matches.is_present("failures") {
+        code = format!("#define FILTER_FAILED {}", code);
+    }
+    if matches.is_present("errorno") {
+        let errorno = matches.value_of("errorno").unwrap();
+        code = format!("#define FILTER_ERRNO {} \n {}", errorno, code)
+    }
+    if matches.is_present("latency") {
+        code = format!("#define LATENCY \n {}", code);
+    }
 
     code
 }
