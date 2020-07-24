@@ -22,6 +22,8 @@ const MILLISECOND: u64 = 1_000 * MICROSECOND;
 const MICROSECOND: u64 = 1_000 * NANOSECOND;
 const NANOSECOND: u64 = 1;
 
+const DEFAULT_INTERVAL: usize = 1;
+
 fn get_code(matches: &ArgMatches) -> String {
     let mut code = include_str!("bpf.c").to_string();
     if let Some(pid) = matches.value_of("pid") {
@@ -110,9 +112,8 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
 
     let interval: usize = matches
         .value_of("interval")
-        .unwrap_or("1")
-        .parse()
-        .expect("Invalid number of interval");
+        .map(|x| x.parse().expect("Invalid argument for interval"))
+        .unwrap_or(DEFAULT_INTERVAL);
 
     let windows: Option<usize> = matches
         .value_of("windows")
