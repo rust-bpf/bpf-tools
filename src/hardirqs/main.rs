@@ -183,7 +183,7 @@ fn map_from_table(table: &mut bcc::table::Table) -> HashMap<String, HashMap<u64,
         let key = parse_struct(&entry.key);
         let name = get_string(&key.name);
 
-        current.entry(name).or_insert(HashMap::new());
+        current.entry(name).or_insert_with(HashMap::new);
 
         let mut value = [0; 8];
         if value.len() != entry.value.len() {
@@ -203,6 +203,7 @@ fn map_from_table(table: &mut bcc::table::Table) -> HashMap<String, HashMap<u64,
     current
 }
 
+#[allow(clippy::cast_ptr_alignment)]
 fn parse_struct(x: &[u8]) -> irq_key_t {
     unsafe { ptr::read_unaligned(x.as_ptr() as *const irq_key_t) }
 }
