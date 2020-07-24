@@ -63,7 +63,7 @@ jobs:
     env:
       BCC: "0.14.0"
       DIST: xenial
-      FEATURES: v0_14_0
+      FEATURES: bcc_v0_14_0
       LLVM: 8
     steps:
     - uses: actions/checkout@v2
@@ -100,7 +100,7 @@ jobs:
     env:
       BCC: "0.12.0"
       DIST: focal
-      FEATURES: v0_12_0
+      FEATURES: bcc_v0_12_0
       LLVM: 9
     steps:
     - uses: actions/checkout@v2
