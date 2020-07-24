@@ -25,6 +25,10 @@ name = "runqlat"
 path = "src/runqlat/main.rs"
 
 [[bin]]
+name = "syscalls"
+path = "src/syscalls/main.rs"
+
+[[bin]]
 name = "tcpconnect"
 path = "src/tcpconnect/main.rs"
 
