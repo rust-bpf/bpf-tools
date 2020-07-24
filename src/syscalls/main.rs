@@ -24,20 +24,15 @@ const NANOSECOND: u64 = 1;
 
 fn get_code(matches: &ArgMatches) -> String {
     let mut code = include_str!("bpf.c").to_string();
-    if matches.is_present("pid") {
-            let pid: u32 = matches
-            .value_of("pid")
-            .unwrap()
-            .parse()
-            .expect("Invalid pid");
-        
+    if let Some(pid) = matches.value_of("pid") {
+        let pid: u32 = pid.parse::<u32>().expect("invalid pid");
         code = format!("#define FILTER_PID {} \n {}", pid, code);
     }
     if matches.is_present("failures") {
         code = format!("#define FILTER_FAILED {}", code);
     }
-    if matches.is_present("errorno") {
-        let errorno = matches.value_of("errorno").unwrap();
+    if let Some(errorno) = matches.value_of("errorno") {
+        // Can either be numeric or error definition.
         code = format!("#define FILTER_ERRNO {} \n {}", errorno, code)
     }
     if matches.is_present("latency") {
@@ -67,14 +62,12 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
         .arg(
             Arg::with_name("milliseconds")
                 .long("milliseconds")
-                .short("M")
                 .help("Display the timestamps in milliseconds")
                 .takes_value(false),
         )
         .arg(
             Arg::with_name("microseconds")
                 .long("microseconds")
-                .short("m")
                 .help("Display the timestamps in microseconds")
                 .takes_value(false),
         )
@@ -199,7 +192,7 @@ fn print_latency(table: &bcc::table::Table, matches: &ArgMatches) {
         // Iterating over an "empty" table results in an iterator of length 1.
         // This iterator contains garbage values that we don't want to show.
         if value.1.count == 0 {
-            continue
+            continue;
         }
 
         println!(
@@ -238,7 +231,7 @@ fn print_count(table: &bcc::table::Table, matches: &ArgMatches) {
         if top.is_some() && top.unwrap() == i {
             break;
         }
-        
+
         // Iterating over an "empty" table results in an iterator of length 1.
         // This iterator contains garbage values that we don't want to show.
         if value.1 == 0 {
