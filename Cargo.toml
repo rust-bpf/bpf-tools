@@ -11,7 +11,7 @@ homepage = "https://github.com/rust-bpf/tools"
 keywords = ["bpf", "ebpf", "bcc", "tools"]
 
 [dependencies]
-bcc = "0.0.20"
+bcc = "0.0.21"
 clap = "2.33.1"
 ctrlc = "3.1.4"
 failure = "0.1.8"
