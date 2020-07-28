@@ -4,7 +4,7 @@ use clap::{App, Arg, ArgMatches};
 
 use core::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
-use std::{mem, ptr, thread, time};
+use std::{ptr, thread, time};
 
 mod syscall;
 
@@ -247,26 +247,27 @@ fn print_count(table: &bcc::table::Table, matches: &ArgMatches) {
     }
 }
 
+#[allow(clippy::cast_ptr_alignment)]
 fn parse_struct(x: &[u8]) -> data_key_t {
     unsafe { ptr::read(x.as_ptr() as *const data_key_t) }
 }
 
 fn parse_u64(x: Vec<u8>) -> u64 {
     let mut v = [0_u8; 8];
-    for i in 0..8 {
-        v[i] = *x.get(i).unwrap_or(&0);
+    for (i, byte) in v.iter_mut().enumerate() {
+        *byte = *x.get(i).unwrap_or(&0);
     }
 
-    unsafe { mem::transmute(v) }
+    u64::from_be_bytes(v)
 }
 
 fn parse_u32(x: Vec<u8>) -> u32 {
     let mut v = [0_u8; 4];
-    for i in 0..4 {
-        v[i] = *x.get(i).unwrap_or(&0);
+    for (i, byte) in v.iter_mut().enumerate() {
+        *byte = *x.get(i).unwrap_or(&0);
     }
 
-    unsafe { mem::transmute(v) }
+    u32::from_be_bytes(v)
 }
 
 fn main() {
@@ -277,11 +278,8 @@ fn main() {
     })
     .expect("Failed to set handler for SIGINT / SIGTERM");
 
-    match do_main(runnable) {
-        Err(x) => {
-            eprintln!("Error: {}", x);
-            std::process::exit(1);
-        }
-        _ => {}
+    if let Err(x) = do_main(runnable) {
+        eprintln!("Error: {}", x);
+        std::process::exit(1);
     }
 }

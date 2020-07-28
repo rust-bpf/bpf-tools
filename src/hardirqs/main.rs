@@ -5,7 +5,7 @@ use clap::{App, Arg};
 use core::sync::atomic::{AtomicBool, Ordering};
 use std::collections::HashMap;
 use std::sync::Arc;
-use std::{cmp, mem, ptr, thread, time};
+use std::{cmp, ptr, thread, time};
 
 // A simple tool for reporting on time spent in hardirq handlers
 //
@@ -160,10 +160,10 @@ fn print_time(table: &mut bcc::table::Table, factor: u64, unit: &str) {
         let value = entry.value;
 
         let mut v = [0_u8; 8];
-        for i in 0..8 {
-            v[i] = *value.get(i).unwrap_or(&0);
+        for (i, byte) in v.iter_mut().enumerate() {
+            *byte = *value.get(i).unwrap_or(&0);
         }
-        let time: u64 = unsafe { mem::transmute(v) };
+        let time = u64::from_be_bytes(v);
         let name = get_string(&data.name);
 
         if time > 0 {
@@ -183,9 +183,7 @@ fn map_from_table(table: &mut bcc::table::Table) -> HashMap<String, HashMap<u64,
         let key = parse_struct(&entry.key);
         let name = get_string(&key.name);
 
-        if !current.contains_key(&name) {
-            current.insert(name, HashMap::new());
-        }
+        current.entry(name).or_insert_with(HashMap::new);
 
         let mut value = [0; 8];
         if value.len() != entry.value.len() {
@@ -205,8 +203,9 @@ fn map_from_table(table: &mut bcc::table::Table) -> HashMap<String, HashMap<u64,
     current
 }
 
+#[allow(clippy::cast_ptr_alignment)]
 fn parse_struct(x: &[u8]) -> irq_key_t {
-    unsafe { ptr::read(x.as_ptr() as *const irq_key_t) }
+    unsafe { ptr::read_unaligned(x.as_ptr() as *const irq_key_t) }
 }
 
 fn get_string(x: &[u8]) -> String {
@@ -224,11 +223,8 @@ fn main() {
     })
     .expect("Failed to set handler for SIGINT / SIGTERM");
 
-    match do_main(runnable) {
-        Err(x) => {
-            eprintln!("Error: {}", x);
-            std::process::exit(1);
-        }
-        _ => {}
+    if let Err(x) = do_main(runnable) {
+        eprintln!("Error: {}", x);
+        std::process::exit(1);
     }
 }

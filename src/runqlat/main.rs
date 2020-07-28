@@ -4,7 +4,7 @@ use failure::Error;
 
 use core::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
-use std::{mem, thread, time};
+use std::{thread, time};
 
 // A simple tool for reporting runqueue latency
 //
@@ -16,9 +16,12 @@ fn attach_events(bpf: &mut BPF) {
         let raw_tp_sched_wakeup_new = bpf.load_raw_tracepoint("raw_tp__sched_wakeup_new").unwrap();
         let raw_tp_sched_switch = bpf.load_raw_tracepoint("raw_tp__sched_switch").unwrap();
 
-        bpf.attach_raw_tracepoint("sched_wakeup", raw_tp_sched_wakeup).unwrap();
-        bpf.attach_raw_tracepoint("sched_wakeup_new", raw_tp_sched_wakeup_new).unwrap();
-        bpf.attach_raw_tracepoint("sched_switch", raw_tp_sched_switch).unwrap();
+        bpf.attach_raw_tracepoint("sched_wakeup", raw_tp_sched_wakeup)
+            .unwrap();
+        bpf.attach_raw_tracepoint("sched_wakeup_new", raw_tp_sched_wakeup_new)
+            .unwrap();
+        bpf.attach_raw_tracepoint("sched_switch", raw_tp_sched_switch)
+            .unwrap();
     } else {
         // load + attach kprobes!
         let trace_run = bpf.load_kprobe("trace_run").unwrap();
@@ -26,9 +29,11 @@ fn attach_events(bpf: &mut BPF) {
         let trace_wake_up_new_task = bpf.load_kprobe("trace_wake_up_new_task").unwrap();
 
         bpf.attach_kprobe("finish_task_switch", trace_run).unwrap();
-        bpf.attach_kprobe("wake_up_new_task", trace_wake_up_new_task).unwrap();
-        bpf.attach_kprobe("ttwu_do_wakeup", trace_ttwu_do_wakeup).unwrap();
-     }
+        bpf.attach_kprobe("wake_up_new_task", trace_wake_up_new_task)
+            .unwrap();
+        bpf.attach_kprobe("ttwu_do_wakeup", trace_ttwu_do_wakeup)
+            .unwrap();
+    }
 }
 
 fn do_main(runnable: Arc<AtomicBool>) -> Result<(), Error> {
@@ -79,10 +84,10 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), Error> {
             let value = entry.value;
 
             let mut v = [0_u8; 8];
-            for i in 0..8 {
-                v[i] = *value.get(i).unwrap_or(&0);
+            for (i, byte) in v.iter_mut().enumerate() {
+                *byte = *value.get(i).unwrap_or(&0);
             }
-            let count: u64 = unsafe { mem::transmute(v) };
+            let count = u64::from_be_bytes(v);
             let value = 2_u64.pow(power as u32);
             if value < 1_000_000 {
                 println!("{} uS: {}", 2_u64.pow(power as u32), count);
@@ -109,12 +114,9 @@ fn main() {
     })
     .expect("Failed to set handler for SIGINT / SIGTERM");
 
-    match do_main(runnable) {
-        Err(x) => {
-            eprintln!("Error: {}", x);
-            eprintln!("{}", x.backtrace());
-            std::process::exit(1);
-        }
-        _ => {}
+    if let Err(x) = do_main(runnable) {
+        eprintln!("Error: {}", x);
+        eprintln!("{}", x.backtrace());
+        std::process::exit(1);
     }
 }

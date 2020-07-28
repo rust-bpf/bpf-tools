@@ -41,12 +41,14 @@ trait IpDataParse<Output> {
 }
 
 impl IpDataParse<ipv4_data_t> for ipv4_data_t {
+    #[allow(clippy::cast_ptr_alignment)]
     fn parse_data_t_struct(x: &[u8]) -> ipv4_data_t {
         unsafe { ptr::read(x.as_ptr() as *const ipv4_data_t) }
     }
 }
 
 impl IpDataParse<ipv6_data_t> for ipv6_data_t {
+    #[allow(clippy::cast_ptr_alignment)]
     fn parse_data_t_struct(x: &[u8]) -> ipv6_data_t {
         unsafe { ptr::read(x.as_ptr() as *const ipv6_data_t) }
     }
@@ -223,12 +225,9 @@ fn main() {
     })
     .expect("Failed to set handler for SIGINT / SIGTERM");
 
-    match do_main(runnable) {
-        Err(x) => {
-            eprintln!("Error: {}", x);
-            eprintln!("{}", x.backtrace());
-            std::process::exit(1);
-        }
-        _ => {}
+    if let Err(x) = do_main(runnable) {
+        eprintln!("Error: {}", x);
+        eprintln!("{}", x.backtrace());
+        std::process::exit(1);
     }
 }

@@ -140,4 +140,3 @@ fi
 sudo target/release/runqlat --interval 1 --windows 5
 timeout --signal=INT --preserve-status 1.0m bash -c 'while true; do curl google.com; sleep 5; done &>/dev/null &'
 sudo timeout --signal=INT --preserve-status 1.0m ./target/release/tcpconnect
-sudo target/release/syscalls --interval 1 --windows 5
