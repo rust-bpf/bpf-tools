@@ -258,7 +258,7 @@ fn parse_u64(x: Vec<u8>) -> u64 {
         *byte = *x.get(i).unwrap_or(&0);
     }
 
-    u64::from_be_bytes(v)
+    u64::from_ne_bytes(v)
 }
 
 fn parse_u32(x: Vec<u8>) -> u32 {
@@ -267,7 +267,7 @@ fn parse_u32(x: Vec<u8>) -> u32 {
         *byte = *x.get(i).unwrap_or(&0);
     }
 
-    u32::from_be_bytes(v)
+    u32::from_ne_bytes(v)
 }
 
 fn main() {
