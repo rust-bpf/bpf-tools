@@ -163,7 +163,7 @@ fn print_time(table: &mut bcc::table::Table, factor: u64, unit: &str) {
         for (i, byte) in v.iter_mut().enumerate() {
             *byte = *value.get(i).unwrap_or(&0);
         }
-        let time = u64::from_be_bytes(v);
+        let time = u64::from_ne_bytes(v);
         let name = get_string(&data.name);
 
         if time > 0 {

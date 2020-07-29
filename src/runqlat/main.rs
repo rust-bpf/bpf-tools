@@ -87,7 +87,7 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), Error> {
             for (i, byte) in v.iter_mut().enumerate() {
                 *byte = *value.get(i).unwrap_or(&0);
             }
-            let count = u64::from_be_bytes(v);
+            let count = u64::from_ne_bytes(v);
             let value = 2_u64.pow(power as u32);
             if value < 1_000_000 {
                 println!("{} uS: {}", 2_u64.pow(power as u32), count);
