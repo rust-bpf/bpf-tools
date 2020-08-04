@@ -1,5 +1,5 @@
-use bcc::core::BPF;
 use bcc::BccError;
+use bcc::{Tracepoint, BPF};
 use clap::{App, Arg, ArgMatches};
 
 use core::sync::atomic::{AtomicBool, Ordering};
@@ -122,12 +122,18 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
     let code = get_code(&matches);
     let mut bpf = BPF::new(&code)?;
 
-    let sys_exit = bpf.load_tracepoint("sys_exit")?;
-    bpf.attach_tracepoint("raw_syscalls", "sys_exit", sys_exit)?;
+    Tracepoint::new()
+        .handler("sys_exit")
+        .subsystem("raw_syscalls")
+        .tracepoint("sys_exit")
+        .attach(&mut bpf)?;
 
     if matches.is_present("latency") {
-        let sys_enter = bpf.load_tracepoint("sys_enter")?;
-        bpf.attach_tracepoint("raw_syscalls", "sys_enter", sys_enter)?;
+        Tracepoint::new()
+            .handler("sys_enter")
+            .subsystem("raw_syscalls")
+            .tracepoint("sys_enter")
+            .attach(&mut bpf)?;
     }
 
     let mut table = bpf.table("data");

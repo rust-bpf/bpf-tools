@@ -54,7 +54,7 @@ dependencies = [
 
 [[package]]
 name = "bcc"
-version = "0.0.21"
+version = "0.0.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "bcc-sys 0.15.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -78,7 +78,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "bpf-tools"
 version = "0.0.1"
 dependencies = [
- "bcc 0.0.21 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bcc 0.0.22 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap 2.33.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "ctrlc 3.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -338,7 +338,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum ansi_term 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ee49baf6cb617b853aa8d93bf420db2383fab46d314482ca2803b40d5fde979b"
 "checksum atty 0.2.14 (registry+https://github.com/rust-lang/crates.io-index)" = "d9b39be18770d11421cdb1b9947a45dd3f37e93092cbf377614828a319d5fee8"
 "checksum backtrace 0.3.50 (registry+https://github.com/rust-lang/crates.io-index)" = "46254cf2fdcdf1badb5934448c1bcbe046a56537b3987d96c51a7afc5d03f293"
-"checksum bcc 0.0.21 (registry+https://github.com/rust-lang/crates.io-index)" = "70f5e0d209f5e6cadf1e4c794b525cece7d3012469a0ef5871a7a9a74ca88d22"
+"checksum bcc 0.0.22 (registry+https://github.com/rust-lang/crates.io-index)" = "2923c9e1f1039b9758691180d3655c532c83a2df90f142958e33847309d1de3b"
 "checksum bcc-sys 0.15.1 (registry+https://github.com/rust-lang/crates.io-index)" = "3fb6e2c034889064e9eb5f259ff994fd0a218de38f1b349d321a9a78eb1f5e17"
 "checksum bitflags 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "cf1de2fe8c75bc145a2f577add951f8134889b4795d47466a54a5c846d691693"
 "checksum byteorder 1.3.4 (registry+https://github.com/rust-lang/crates.io-index)" = "08c48aae112d48ed9f069b33538ea9e3e90aa263cfa3d1c24309612b1f7472de"

@@ -1,4 +1,4 @@
-use bcc::core::BPF;
+use bcc::{Kprobe, Kretprobe, BPF};
 use clap::{App, Arg};
 use core::sync::atomic::{AtomicBool, Ordering};
 use failure::Error;
@@ -190,15 +190,24 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), Error> {
 
     // compile the above BPF code!
     let mut module = BPF::new(bpf_text.as_str())?;
-    // load + attach tracepoints!
-    let trace_connect_v4_entry = module.load_kprobe("trace_connect_entry")?;
-    let trace_connect_v6_entry = module.load_kprobe("trace_connect_entry")?;
-    let trace_connect_v4_return = module.load_kprobe("trace_connect_v4_return")?;
-    let trace_connect_v6_return = module.load_kprobe("trace_connect_v6_return")?;
-    module.attach_kprobe("tcp_v4_connect", trace_connect_v4_entry)?;
-    module.attach_kprobe("tcp_v6_connect", trace_connect_v6_entry)?;
-    module.attach_kretprobe("tcp_v4_connect", trace_connect_v4_return)?;
-    module.attach_kretprobe("tcp_v6_connect", trace_connect_v6_return)?;
+
+    // load + attach probes!
+    Kprobe::new()
+        .handler("trace_connect_entry")
+        .function("tcp_v4_connect")
+        .attach(&mut module)?;
+    Kprobe::new()
+        .handler("trace_connect_entry")
+        .function("tcp_v6_connect")
+        .attach(&mut module)?;
+    Kretprobe::new()
+        .handler("trace_connect_v4_return")
+        .function("tcp_v4_connect")
+        .attach(&mut module)?;
+    Kretprobe::new()
+        .handler("trace_connect_v6_return")
+        .function("tcp_v6_connect")
+        .attach(&mut module)?;
 
     println!("Tracing connect ... Hit Ctrl-C to end");
     let ipv4_table = module.table("ipv4_events");
