@@ -1,5 +1,5 @@
-use bcc::core::BPF;
 use bcc::BccError;
+use bcc::{Kprobe, BPF};
 use clap::{App, Arg};
 
 use core::sync::atomic::{AtomicBool, Ordering};
@@ -88,11 +88,14 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
 
     let mut bpf = BPF::new(&code)?;
 
-    let hardirq_entry = bpf.load_kprobe("hardirq_entry")?;
-    let hardirq_exit = bpf.load_kprobe("hardirq_exit")?;
-
-    bpf.attach_kprobe("handle_irq_event_percpu", hardirq_entry)?;
-    bpf.attach_kretprobe("handle_irq_event_percpu", hardirq_exit)?;
+    Kprobe::new()
+        .handler("hardirq_entry")
+        .function("handle_irq_event_percpu")
+        .attach(&mut bpf)?;
+    Kprobe::new()
+        .handler("hardirq_exit")
+        .function("handle_irq_event_percpu")
+        .attach(&mut bpf)?;
 
     let mut table = bpf.table("dist");
     let mut window = 0;
