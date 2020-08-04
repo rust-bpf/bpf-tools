@@ -15,6 +15,9 @@ bcc = "0.0.22"
 clap = "2.33.1"
 ctrlc = "3.1.4"
 failure = "0.1.8"
+libc = "0.2"
+byteorder = "1"
+multimap = "0.8"
 
 [[bin]]
 name = "hardirqs"
@@ -31,6 +34,10 @@ path = "src/syscalls/main.rs"
 [[bin]]
 name = "tcpconnect"
 path = "src/tcpconnect/main.rs"
+
+[[bin]]
+name = "execsnoop"
+path = "src/execsnoop/main.rs"
 
 [features]
 static = ["bcc/static"]
