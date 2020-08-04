@@ -113,8 +113,7 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
 
     // initialize "shared" multimap on the heap (experimental)
     let arg_map: Arc<Mutex<MultiMap<u32, String>>> = Arc::new(Mutex::new(MultiMap::new()));
-    let arg_map_c = arg_map.clone();
-    let argmap_sptr = format!("{:?}", &&arg_map_c as *const _);
+    let argmap_sptr = format!("{:?}", &&arg_map as *const _);
     c = c.replace("ARGMAP_PTR", &argmap_sptr);
 
     // compile the above BPF code
@@ -185,11 +184,8 @@ fn perf_data_callback() -> Box<dyn FnMut(&[u8]) + Send> {
                 arg_map.insert(data.pid, get_string(&data.argv));
             }
             event_type::EventRet => {
-                match arg_map.get_vec(&data.pid) {
-                    Some(v) => {
-                        argv_txt = v.join(" ");
-                    }
-                    None => {}
+                if let Some(v) = arg_map.get_vec(&data.pid) {
+                    argv_txt = v.join(" ");
                 }
                 if !skip {
                     println!(
@@ -208,6 +204,7 @@ fn perf_data_callback() -> Box<dyn FnMut(&[u8]) + Send> {
     })
 }
 
+#[allow(clippy::cast_ptr_alignment)]
 fn parse_struct(x: &[u8]) -> data_t {
     unsafe { ptr::read(x.as_ptr() as *const data_t) }
 }
