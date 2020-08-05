@@ -1,18 +1,7 @@
-extern crate bcc;
-extern crate byteorder;
-extern crate libc;
-extern crate multimap;
-
-use bcc::perf_event::init_perf_map;
-use bcc::BccError;
-use bcc::{Kprobe, Kretprobe, BPF};
+use bcc::{perf_event::init_perf_map, BccError, Kprobe, Kretprobe, BPF};
 use clap::{App, Arg};
 use core::sync::atomic::{AtomicBool, Ordering};
-
-use std::ptr;
-use std::sync::Arc;
-use std::sync::Mutex;
-
+use std::{ptr, sync::Arc, sync::Mutex};
 use multimap::MultiMap;
 
 /*

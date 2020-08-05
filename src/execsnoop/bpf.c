@@ -1,3 +1,5 @@
+// This code is derived from https://github.com/iovisor/bcc/blob/master/tools/execsnoop.py
+// By Brendan Gregg, Copyright 2016 Netflix, Inc.
 #include <uapi/linux/ptrace.h>
 #include <linux/sched.h>
 #include <linux/fs.h>
