@@ -1,8 +1,8 @@
 use bcc::{perf_event::init_perf_map, BccError, Kprobe, Kretprobe, BPF};
 use clap::{App, Arg};
 use core::sync::atomic::{AtomicBool, Ordering};
-use std::{ptr, sync::Arc, sync::Mutex};
 use multimap::MultiMap;
+use std::{ptr, sync::Arc, sync::Mutex};
 
 /*
     Snoop on execve() system calls
