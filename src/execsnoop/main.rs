@@ -1,7 +1,7 @@
 use bcc::{perf_event::init_perf_map, BccError, Kprobe, Kretprobe, BPF};
 use clap::{App, Arg};
-use core::sync::atomic::{AtomicBool, Ordering};
 use multimap::MultiMap;
+use core::sync::atomic::{AtomicBool, Ordering};
 use std::{ptr, sync::Arc, sync::Mutex};
 
 /*
