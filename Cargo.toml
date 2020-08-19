@@ -12,9 +12,16 @@ keywords = ["bpf", "ebpf", "bcc", "tools"]
 
 [dependencies]
 bcc = "0.0.22"
+byteorder = "1.3.4"
 clap = "2.33.1"
 ctrlc = "3.1.4"
 failure = "0.1.8"
+libc = "0.2.74"
+multimap = "0.8.1"
+
+[[bin]]
+name = "execsnoop"
+path = "src/execsnoop/main.rs"
 
 [[bin]]
 name = "hardirqs"
