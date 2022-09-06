@@ -1,4 +1,4 @@
-use bcc::{perf_event::init_perf_map, BccError, Kprobe, Kretprobe, BPF};
+use bcc::{BccError, Kprobe, Kretprobe, BPF};
 use clap::{App, Arg};
 use multimap::MultiMap;
 
@@ -120,9 +120,9 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
         .attach(&mut module)?;
 
     // the "events" table is where the "execve" events get sent
-    let table = module.table("events");
+    let table = module.table("events").expect("failed to load bpf table");
     // install a callback to print out file events when they happen
-    let mut perf_map = init_perf_map(table, perf_data_callback)?;
+    module.init_perf_map(table, perf_data_callback)?;
 
     // print a header
     let marg = maxarg.parse::<usize>().unwrap_or(20);
@@ -139,7 +139,7 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
     let start = std::time::Instant::now();
     // this `.poll()` loop is what makes our callback get called
     while runnable.load(Ordering::SeqCst) {
-        perf_map.poll(200);
+        module.perf_map_poll(200);
         if let Some(d) = duration {
             if std::time::Instant::now() - start >= d {
                 break;
@@ -151,6 +151,7 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
 }
 
 // Performance Data Callback Function
+#[allow(clippy::type_complexity)]
 fn perf_data_callback() -> Box<dyn FnMut(&[u8]) + Send> {
     let skip = false;
 

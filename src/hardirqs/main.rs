@@ -37,14 +37,14 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
         .arg(
             Arg::with_name("nanoseconds")
                 .long("nano")
-                .short("N")
+                .short('N')
                 .help("Display the timestamps in nanoseconds")
                 .takes_value(false),
         )
         .arg(
             Arg::with_name("distribution")
                 .long("dist")
-                .short("d")
+                .short('d')
                 .help("Show the distribution")
                 .takes_value(false),
         )
@@ -97,7 +97,7 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
         .function("handle_irq_event_percpu")
         .attach(&mut bpf)?;
 
-    let mut table = bpf.table("dist");
+    let mut table = bpf.table("dist").expect("failed to load bpf table");
     let mut window = 0;
 
     while runnable.load(Ordering::SeqCst) {
@@ -119,6 +119,7 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
     Ok(())
 }
 
+#[allow(clippy::format_in_format_args)]
 fn print_distribution(table: &mut bcc::table::Table, unit: &str) {
     println!("\n=====");
     for (hardirq_name, value) in map_from_table(table) {

@@ -54,6 +54,7 @@ impl IpDataParse<ipv6_data_t> for ipv6_data_t {
     }
 }
 
+#[allow(clippy::type_complexity)]
 fn perf_ipv4_data_t_callback() -> Box<dyn FnMut(&[u8]) + Send> {
     Box::new(|x| {
         // This callback
@@ -65,14 +66,15 @@ fn perf_ipv4_data_t_callback() -> Box<dyn FnMut(&[u8]) + Send> {
                 data.pid,
                 task.trim_end_matches('\0'),
                 data.ip,
-                Ipv4Addr::from(htonl(data.saddr)).to_string(),
-                Ipv4Addr::from(htonl(data.daddr)).to_string(),
+                Ipv4Addr::from(htonl(data.saddr)),
+                Ipv4Addr::from(htonl(data.daddr)),
                 data.dport
             );
         }
     })
 }
 
+#[allow(clippy::type_complexity)]
 fn perf_ipv6_data_t_callback() -> Box<dyn FnMut(&[u8]) + Send> {
     Box::new(|x| {
         // This callback
@@ -87,8 +89,8 @@ fn perf_ipv6_data_t_callback() -> Box<dyn FnMut(&[u8]) + Send> {
                 data.pid,
                 task.trim_end_matches('\0'),
                 data.ip,
-                Ipv6Addr::from(saddr).to_string(),
-                Ipv6Addr::from(daddr).to_string(),
+                Ipv6Addr::from(saddr),
+                Ipv6Addr::from(daddr),
                 data.dport
             );
         }
@@ -116,7 +118,7 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), Error> {
         )
         .arg(
             Arg::with_name("uid")
-                .short("u")
+                .short('u')
                 .long("uid")
                 .help("trace this UID only, e.g. -u 2322")
                 .value_name("UID")
@@ -125,7 +127,7 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), Error> {
         )
         .arg(
             Arg::with_name("pid")
-                .short("p")
+                .short('p')
                 .long("pid")
                 .help("trace this PID only, e.g. -p 343")
                 .value_name("PID")
@@ -134,7 +136,7 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), Error> {
         )
         .arg(
             Arg::with_name("port")
-                .short("P")
+                .short('P')
                 .long("port")
                 .help("destination ports to trace, e.g. -P 22 80 443")
                 .value_name("PORT")
@@ -210,10 +212,10 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), Error> {
         .attach(&mut module)?;
 
     println!("Tracing connect ... Hit Ctrl-C to end");
-    let ipv4_table = module.table("ipv4_events");
-    let ipv6_table = module.table("ipv6_events");
-    let _ipv4_perf_map = module.init_perf_map(ipv4_table, perf_ipv4_data_t_callback)?;
-    let _ipv6_perf_map = module.init_perf_map(ipv6_table, perf_ipv6_data_t_callback)?;
+    let ipv4_table = module.table("ipv4_events").expect("failed to load bpf table");
+    let ipv6_table = module.table("ipv6_events").expect("failed to load bpf table");
+    module.init_perf_map(ipv4_table, perf_ipv4_data_t_callback)?;
+    module.init_perf_map(ipv6_table, perf_ipv6_data_t_callback)?;
     // print a header
     println!(
         "{: <6} {: <6} {: <16} {: <16} {: <16} {: <16} {: <4}",

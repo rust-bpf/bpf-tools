@@ -83,7 +83,7 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), Error> {
     let mut bpf = BPF::new(&code)?;
     attach_events(&mut bpf);
 
-    let table = bpf.table("dist");
+    let table = bpf.table("dist").expect("failed to load bpf table");
     let mut window = 0;
 
     while runnable.load(Ordering::SeqCst) {
