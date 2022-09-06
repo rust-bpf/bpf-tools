@@ -27,8 +27,8 @@ if [[ $STATIC == true ]]; then
 
     echo "build zlib"
     curl -L -O https://zlib.net/zlib-1.2.12.tar.gz
-    tar xzf zlib-1.2.11.tar.gz
-    cd zlib-1.2.11
+    tar xzf zlib-1.2.12.tar.gz
+    cd zlib-1.2.12
     ./configure --prefix=/usr
     make -j2
     sudo make install
