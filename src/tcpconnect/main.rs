@@ -212,8 +212,12 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), Error> {
         .attach(&mut module)?;
 
     println!("Tracing connect ... Hit Ctrl-C to end");
-    let ipv4_table = module.table("ipv4_events").expect("failed to load bpf table");
-    let ipv6_table = module.table("ipv6_events").expect("failed to load bpf table");
+    let ipv4_table = module
+        .table("ipv4_events")
+        .expect("failed to load bpf table");
+    let ipv6_table = module
+        .table("ipv6_events")
+        .expect("failed to load bpf table");
     module.init_perf_map(ipv4_table, perf_ipv4_data_t_callback)?;
     module.init_perf_map(ipv6_table, perf_ipv6_data_t_callback)?;
     // print a header
