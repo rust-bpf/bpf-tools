@@ -26,7 +26,7 @@ if [[ $STATIC == true ]]; then
     cd ..
 
     echo "build zlib"
-    curl -L -O https://zlib.net/zlib-1.2.11.tar.gz
+    curl -L -O https://zlib.net/zlib-1.2.12.tar.gz
     tar xzf zlib-1.2.11.tar.gz
     cd zlib-1.2.11
     ./configure --prefix=/usr
