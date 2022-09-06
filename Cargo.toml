@@ -1,6 +1,6 @@
 [package]
 name = "bpf-tools"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Brian Martin <bmartin@twitter.com>"]
 description = "eBPF tools implemented in Rust"
 edition = "2018"
