@@ -76,35 +76,35 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
         .arg(
             Arg::with_name("pid")
                 .long("pid")
-                .short("p")
+                .short('p')
                 .help("Trace only the given pid")
                 .takes_value(true),
         )
         .arg(
             Arg::with_name("top")
                 .long("top")
-                .short("t")
+                .short('t')
                 .help("Display the top syscalls by count or latency")
                 .takes_value(true),
         )
         .arg(
             Arg::with_name("errorno")
                 .long("errorno")
-                .short("e")
+                .short('e')
                 .help("Trace only the syscalls that return the given error (numeric or EPERM, ...)")
                 .takes_value(true),
         )
         .arg(
             Arg::with_name("failures")
                 .long("failures")
-                .short("x")
+                .short('x')
                 .help("Trace only failed syscalls")
                 .takes_value(false),
         )
         .arg(
             Arg::with_name("latency")
                 .long("latency")
-                .short("L")
+                .short('L')
                 .help("Collect syscall latency")
                 .takes_value(false),
         )
@@ -136,7 +136,7 @@ fn do_main(runnable: Arc<AtomicBool>) -> Result<(), BccError> {
             .attach(&mut bpf)?;
     }
 
-    let mut table = bpf.table("data");
+    let mut table = bpf.table("data").expect("failed to load bpf table");
     let mut window = 0;
 
     while runnable.load(Ordering::SeqCst) {

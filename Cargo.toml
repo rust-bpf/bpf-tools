@@ -1,6 +1,6 @@
 [package]
 name = "bpf-tools"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Brian Martin <bmartin@twitter.com>"]
 description = "eBPF tools implemented in Rust"
 edition = "2018"
@@ -11,13 +11,13 @@ homepage = "https://github.com/rust-bpf/tools"
 keywords = ["bpf", "ebpf", "bcc", "tools"]
 
 [dependencies]
-bcc = "0.0.22"
+bcc = "0.0.32"
 byteorder = "1.3.4"
-clap = "2.33.1"
-ctrlc = "3.1.4"
+clap = "3.2.20"
+ctrlc = "3.2.3"
 failure = "0.1.8"
-libc = "0.2.74"
-multimap = "0.8.1"
+libc = "0.2.132"
+multimap = "0.8.3"
 
 [[bin]]
 name = "execsnoop"
@@ -50,5 +50,13 @@ bcc_v0_12_0 = ["bcc/v0_12_0","bcc_specific"]
 bcc_v0_13_0 = ["bcc/v0_13_0","bcc_specific"]
 bcc_v0_14_0 = ["bcc/v0_14_0","bcc_specific"]
 bcc_v0_15_0 = ["bcc/v0_15_0","bcc_specific"]
+bcc_v0_16_0 = ["bcc/v0_16_0","bcc_specific"]
+bcc_v0_17_0 = ["bcc/v0_17_0","bcc_specific"]
+bcc_v0_18_0 = ["bcc/v0_18_0","bcc_specific"]
+bcc_v0_19_0 = ["bcc/v0_19_0","bcc_specific"]
+bcc_v0_20_0 = ["bcc/v0_20_0","bcc_specific"]
+bcc_v0_21_0 = ["bcc/v0_21_0","bcc_specific"]
+bcc_v0_22_0 = ["bcc/v0_22_0","bcc_specific"]
+bcc_v0_23_0 = ["bcc/v0_23_0","bcc_specific"]
 llvm_8 = ["bcc/llvm_8"]
 llvm_9 = ["bcc/llvm_9"]
